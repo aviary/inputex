@@ -7,7 +7,7 @@ YUI().use(function(Y) {
 				combine: false,
 				modules: {
 				   'inputex': {
-				      requires: ['node','intl'],
+				      requires: ['intl', 'pluginhost-base', 'pluginhost-config', 'base-pluginhost', 'node-pluginhost', 'plugin', 'node'],
 				      skinnable: true,
 				      lang: ['en','fr','de','es','fr','it','nl']
 				   },
@@ -41,6 +41,9 @@ YUI().use(function(Y) {
 					},
 					'inputex-datatable': {
 						requires: ['inputex-group', 'inputex-panel','datatable']
+					},
+					'inputex-ddlist': {
+						requires: ['inputex-field', 'array-extras', 'sortable', 'substitute']
 					},
 					/*'inputex-dtinplaceedit': {
 						requires: ['inputex-datatable']
@@ -100,7 +103,7 @@ YUI().use(function(Y) {
 						ix_provides: 'uppercase'
 					},
 					'inputex-autocomplete': {
-						requires: ['inputex-string','autocomplete', 'autocomplete-filters', 'autocomplete-highlighters','datasource'],
+						requires: ['inputex-string','autocomplete'],
 						ix_provides: 'autocomplete'
 					},
 					'inputex-checkbox': {
@@ -108,7 +111,7 @@ YUI().use(function(Y) {
 						ix_provides: 'boolean'
 					},
 					'inputex-color': {
-						requires: ['inputex-field','node-event-delegate','overlay'],
+						requires: ['inputex-field','node-event-delegate','event-outside','overlay'],
 						skinnable: true,
 						ix_provides: 'color'
 					},
@@ -122,7 +125,7 @@ YUI().use(function(Y) {
 						ix_provides: 'date'
 					},
 					'inputex-datepicker': {
-						requires: ['inputex-date','node-event-delegate','overlay','calendar'],
+						requires: ['inputex-date','event-outside', 'node-event-delegate','overlay','calendar'],
 						ix_provides: 'datepicker'
 					},
 					'inputex-dateselectmonth': {
@@ -152,6 +155,10 @@ YUI().use(function(Y) {
 					'inputex-timeinterval': {
 						requires: ['inputex-combine', 'inputex-select'],
 						ix_provides: 'timeinterval'
+					},
+					'inputex-timerange': {
+						requires: ['inputex-combine', 'inputex-select'],
+						ix_provides: 'timerange'
 					},
 					'inputex-dsselect': {
 						requires: ['inputex-select', 'datasource'],
@@ -244,7 +251,7 @@ YUI().use(function(Y) {
 						ix_provides: 'ratingstarsform'
 					},
 					'inputex-menu': {
-					   requires: ['inputex-field','yui2-menu'],
+					   requires: ['inputex-field', 'node-event-delegate', 'node-menunav', 'substitute'],
 						ix_provides: 'menu'
 					},
 					'inputex-file': {

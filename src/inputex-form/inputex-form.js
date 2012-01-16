@@ -205,16 +205,21 @@ Y.extend(inputEx.Form, inputEx.Group, {
 
       if(this.options.ajax.showMask) { this.showMask(); }
 
-    var formValue = this.getValue();
+      var formValue = this.getValue();
 
       // options.ajax.uri and options.ajax.method can also be functions that return a the uri/method depending of the value of the form
       var uri = lang.isFunction(this.options.ajax.uri) ? this.options.ajax.uri(formValue) : this.options.ajax.uri;
       var method = lang.isFunction(this.options.ajax.method) ? this.options.ajax.method(formValue) : this.options.ajax.method;
 
       var postData = null;
+      
+      var headers = {};
 
       // Classic application/x-www-form-urlencoded (like html forms)
       if(this.options.ajax.contentType == "application/x-www-form-urlencoded" && method != "PUT") {
+         
+         headers["Content-Type"] = "application/x-www-form-urlencoded";
+         
         var params = [];
         for(var key in formValue) {
           if(formValue.hasOwnProperty(key)) {
@@ -226,7 +231,7 @@ Y.extend(inputEx.Form, inputEx.Group, {
       }
       // The only other contentType available is "application/json"
       else {
-        Y.io.header('Content-Type', 'application/json');
+        headers["Content-Type"] = 'application/json';
 
         // method PUT don't send as x-www-form-urlencoded but in JSON
         if(method == "PUT") {
@@ -247,21 +252,22 @@ Y.extend(inputEx.Form, inputEx.Group, {
           postData = "value="+window.encodeURIComponent(Y.JSON.stringify(this.getValue()));
         }
       }
-      var onSuccess = function(o) {
+      var onSuccess = function() {
             if(this.options.ajax.showMask) { this.hideMask(); }
             if( lang.isFunction(this.options.ajax.callback.success) ) {
-               this.options.ajax.callback.success.call(this.options.ajax.callback.scope,o);
+               this.options.ajax.callback.success.apply(this.options.ajax.callback.scope,arguments);
             }
       };
-      var onFailure = function(o) {
+      var onFailure = function() {
             if(this.options.ajax.showMask) { this.hideMask(); }
             if( lang.isFunction(this.options.ajax.callback.failure) ) {
-               this.options.ajax.callback.failure.call(this.options.ajax.callback.scope,o);
+               this.options.ajax.callback.failure.apply(this.options.ajax.callback.scope,arguments);
             }
       };
       Y.io(uri,{
         method:method,
         data: postData,
+        headers: headers,
         on : {
           success: onSuccess,
           failure: onFailure

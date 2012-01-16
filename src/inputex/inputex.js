@@ -189,7 +189,7 @@ YUI.add("inputex", function(Y){
         
         var type = inputexDef.type || 'string',
             module = YUI_config.groups.inputex.modulesByType[type],
-            modules = [module],
+            modules = [module || type],
             //set fields if they exist
             fields = inputexDef.fields ||
             //else see if we have elementType for lists - if neither then we end up with null
@@ -203,7 +203,6 @@ YUI.add("inputex", function(Y){
            }, this);
         }
         
-        // TODO: list elementType
         // TODO: inplaceedit  editorField
         
         return modules;
@@ -387,5 +386,5 @@ YUI.add("inputex", function(Y){
      
   });
 }, '3.0.0a',{
-  requires: ['node','intl']
+  requires: ['pluginhost-base', 'pluginhost-config', 'base-pluginhost', 'node-pluginhost', 'plugin', 'node','intl']
 });

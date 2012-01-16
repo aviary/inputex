@@ -9,7 +9,20 @@
 Release Notes:
 ==============
 
-next version, 3.0.0a :
-----------------------
+3.0.1:  not released yet
+------
+  * features:
+    * email field: add option to exclude emails with disposable domains (@trashmail.net, a.s.o)
+    
+  * bug fixes:
+    * email field: fix several bugs with fixdomain option
+    * color field in a form
+    * form ajax callbacks params
+    * form ajax headers
+    * inputEx.use : using "type" as default module name
+
+
+3.0.0a : August, 19th 2011
+--------
 
   * initial YUI 3.x port

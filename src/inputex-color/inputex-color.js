@@ -17,6 +17,7 @@ YUI.add("inputex-color",function(Y){
  *   <li>palette: default palette to be used (if colors option not provided)</li>
  *   <li>cellPerLine: how many colored cells in a row on the palette</li>
  *   <li>ratio: screen-like ratio to display the palette, syntax: [with,height], default: [16,9] (if cellPerLine not provided)</li>
+ *   <li>zIndex: zIndex of the overlay</li>
  * </ul>
  */
 inputEx.ColorField = function(options) {
@@ -33,6 +34,7 @@ Y.extend(inputEx.ColorField, inputEx.Field, {
    	
    	// Overwrite options
    	this.options.className = options.className ? options.className : 'inputEx-Field inputEx-ColorField inputEx-PickerField';
+      this.options.zIndex = options.zIndex || 4;
    	
    	// Added options
    	this.options.palette = options.palette;
@@ -48,42 +50,38 @@ Y.extend(inputEx.ColorField, inputEx.Field, {
 	   // Create overlay
       this.oOverlay = new Y.Overlay({
          visible:false,
-         zIndex: 4
+         zIndex: this.options.zIndex
       });
-      this.oOverlay.render();
+      this.oOverlay.render(this.fieldContainer);
       
-      Y.one( Y.DOM._getWin().document ).on('click', function(e) {
-         var n = e.target._node
-         if(n != this.button._node && n != this.colorEl) {
-            this.oOverlay.hide();
+      this.oOverlay.on('visibleChange', function (e) {
+
+         if (e.newVal) { // show
+            // align
+            this.oOverlay.set("align", {node:this.button,  points:[Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]});
+
+            // Activate outside event handler
+            this.outsideHandler = this.oOverlay.get('boundingBox').on('mousedownoutside', function (e) {
+               this.oOverlay.hide();
+            }, this);
          }
-      },this );
+         else { // hide
+            this.outsideHandler.detach();
+         }
 
+      }, this);
    },
-   
-   
-	_toggleOverlay: function(e) {
-	   
-	   // DON'T stop the event since it will be used to close other overlays...
-	   //e.stopPropagation();
-	   
-      // palette may not have been rendered yet
-      this.renderPalette();
-      
-      if(this.oOverlay.get('visible')) {
-         this.oOverlay.hide();
-      }
-      else {
-         
-         // Show menu
-         this.oOverlay.show();
 
-         // align
-         this.oOverlay.set("align", {node:this.button,  points:[Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]});
-      }
-      
-	},
-   
+   _toggleOverlay: function(e) {
+       // PreventDefault to prevent submit in a form
+       e.preventDefault();
+
+       // palette may not have been rendered yet
+       this.renderPalette();
+
+       this.oOverlay[this.oOverlay.get('visible') ? 'hide' : 'show']();
+   },
+
 	/**
 	 * Render the color button and the colorpicker popup
 	 */
@@ -149,9 +147,6 @@ Y.extend(inputEx.ColorField, inputEx.Field, {
       // Render the color grid
       this.colorGrid = this.renderColorGrid();
       this.oOverlay.set('bodyContent', this.colorGrid);
-
-      // Unsubscribe the event so this function is called only once
-      this.button.unsubscribe("click", this.renderPalette); 
 
       this.paletteRendered = true;
       
@@ -250,7 +245,9 @@ Y.extend(inputEx.ColorField, inputEx.Field, {
 	 * Call overlay when field is removed
 	 */
 	close: function() {
-	  this.oOverlay.hide();
+      if (this.oOverlay) {
+         this.oOverlay.hide();
+      }
 	},
 	
 	/**
@@ -353,5 +350,5 @@ inputEx.ColorField.ensureHexa = function (color) {
 inputEx.registerType("color", inputEx.ColorField, []);
 	
 },'3.0.0a',{
-  requires: ['inputex-field','node-event-delegate','overlay']
+  requires: ['inputex-field','node-event-delegate','event-outside','overlay']
 });
